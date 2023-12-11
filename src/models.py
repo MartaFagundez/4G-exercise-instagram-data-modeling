@@ -7,26 +7,48 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__ = 'Users'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    name = Column(String(50))
+    user_name = Column(String(20), nullable=False)
+    email = Column(String(50), nullable=False)
+    phone = Column(String(20))
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Post(Base):
+    __tablename__ = 'Posts'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    img_url = Column(String(500), nullable=False)
+    title = Column(String(30), nullable=False)
+    description = Column(String(2000))
+    user_id = Column(Integer, ForeignKey('Users.id'))
+    user = relationship(User)
 
-    def to_dict(self):
-        return {}
+class Comment(Base):
+    __tablename__ = 'Comments'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('Users.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('Posts.id'))
+    post = relationship(Post)
+    content = Column(String(1000), nullable=False)
+
+class ReactionType(Base):
+    __tablename__ = 'ReactionTypes'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(30), nullable=False, unique=True)
+    icon_url = Column(String(500), nullable=False)
+
+class Reaction(Base):
+    __tablename__ = 'Reactions'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('Users.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('Posts.id'))
+    post = relationship(Post)
+    reaction_type_id = Column(Integer, ForeignKey('ReactionTypes.id'))
+    reaction = relationship(ReactionType)
+
 
 ## Draw from SQLAlchemy base
 try:
